@@ -30,10 +30,10 @@ class Equations:
         self.params = placeholders - set(variables)
         self.variables = [(var.name, var) for var in variables]
 
-    def calc(self, y0: list[Any], params: dict[str, Any]):
+    def calc(self, y: list[Any], params: dict[str, Any]):
         data: dict[str, Any] = {}
         for no, (var_name, _) in enumerate(self.variables):
-            data[var_name] = y0[no]
+            data[var_name] = y[no]
 
         data.update(params)
         val: list[Any] = []
