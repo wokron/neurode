@@ -1,4 +1,4 @@
-from ..calc import Placeholder
+from ..calc.calc_node import Placeholder
 
 
 def test_basic_calculation():

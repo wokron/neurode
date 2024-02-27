@@ -39,11 +39,24 @@ class CalcNode:
 
     @staticmethod
     def __process_other(other):
-        return other if isinstance(other, CalcNode) else lambda _: other
+        return other if isinstance(other, CalcNode) else Value(other)
 
     @property
-    def placeholders(self):
+    def placeholders(self) -> list["Placeholder"]:
         raise NotImplementedError
+
+
+class Value(CalcNode):
+    def __init__(self, val) -> None:
+        super().__init__()
+        self.val = val
+
+    def __call__(self, data: dict[str, Any]):
+        return self.val
+
+    @property
+    def placeholders(self) -> list["Placeholder"]:
+        return []
 
 
 class Placeholder(CalcNode):
@@ -55,8 +68,8 @@ class Placeholder(CalcNode):
         return data[self.name]
 
     @property
-    def placeholders(self):
-        raise [self]
+    def placeholders(self) -> list["Placeholder"]:
+        return [self]
 
 
 class Operator(CalcNode):
@@ -74,5 +87,5 @@ class Operator(CalcNode):
         return self.operate_fn(left_val, right_val)
 
     @property
-    def placeholders(self):
+    def placeholders(self) -> list[Placeholder]:
         return self.left.placeholders + self.right.placeholders
