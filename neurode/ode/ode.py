@@ -17,3 +17,6 @@ class ODE:
             return self.equations.calc(y, params)
 
         return odeint(ode_func, y0, t, args=(self.params,))
+
+    def fit(self, y, t):
+        pass
