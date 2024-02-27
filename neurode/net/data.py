@@ -13,7 +13,7 @@ class ODEDataset(Dataset):
         self.y = y[:-1, :]  # (sample_num-1, y_num)
         self.y_next = y[1:, :]  # (sample_num-1, y_num)
         self.steps = np.diff(t)  # (sample_num-1, )
-        self.t = t[:-1, :]  # (sample_num-1, )
+        self.t = t[:-1]  # (sample_num-1, )
 
     def __len__(self):
         return len(self.y)
