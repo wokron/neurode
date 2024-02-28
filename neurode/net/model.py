@@ -1,6 +1,6 @@
 from typing import Callable
 from torch import nn
-
+import torch
 
 class NeuroODE(nn.Module):
     def __init__(
@@ -20,7 +20,7 @@ class NeuroODE(nn.Module):
             weights.append(params[param_name])
 
         self.params_no = params_no
-        self.weights = nn.Parameter(weights, requires_grad=True)
+        self.weights = nn.Parameter(torch.tensor(weights), requires_grad=True)
         self.ode_func = ode_func
 
     def get_params(self):
@@ -37,12 +37,13 @@ class NeuroODE(nn.Module):
 
     def forward(self, t, y, steps):
         """
-        steps: (batch_size, )
         t: (batch_size, )
-        y: (batch_size, y_num)
+        y: (y_num, batch_size)
+        steps: (batch_size, )
         """
-        dy = self.ode_func(y, t, self.get_params_weights())  # (batch_size, y_num)
-
+        dy = self.ode_func(y, t, self.get_params_weights())  # (y_num, batch_size)
+        dy = torch.stack(dy, dim=0)
+        
         y_next = y + steps * dy
 
         return y_next
