@@ -7,11 +7,11 @@ from neurode.net.model import NeuroODE
 class ODETrainer:
     def __init__(
         self,
-        device: torch.device,
+        device: str,
         epoches: int,
         lr: float,
     ) -> None:
-        self.device = device
+        self.device = torch.device(device)
         self.epoches = epoches
         self.lr = lr
 
@@ -25,17 +25,11 @@ class ODETrainer:
 
         optim = torch.optim.Adam(model.parameters(), self.lr)
 
-        loss_arr = []
-
         for _ in range(self.epoches):
             result = model(y[0], t)
 
-            loss = loss_fn(result, y[1:])
-
-            loss_arr.append(loss.item())
+            loss = loss_fn(result, y)
 
             optim.zero_grad()
             loss.backward()
             optim.step()
-
-        pass

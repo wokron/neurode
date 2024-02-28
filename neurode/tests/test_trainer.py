@@ -1,9 +1,10 @@
 import numpy as np
-from neurode.net.data import ODEDataset
 from neurode.net.model import NeuroODE
 from neurode.net.trainer import ODETrainer
 import torch
 from scipy.integrate import odeint
+
+from neurode.tests.utils import generate_data
 
 
 def ode_func(y0, t, params):
@@ -13,35 +14,27 @@ def ode_func(y0, t, params):
     return [dx, dy]
 
 
-def generate_data():
-    def ode_func2(y, t):
-        x, y = y
-        dx = 2 * x - 0.02 * x * y
-        dy = 0.0002 * x * y - 0.8 * y
-        return [dx, dy]
-
-    t = np.linspace(0, 10, 500)
-    return odeint(ode_func2, [5000, 120], t), t
-
-
 def test_trainer():
     y, t = generate_data()
 
     trainer = ODETrainer(
         device=torch.device("cpu"),
-        epoches=100,
+        epoches=10,
         lr=1e-6,
     )
 
+    init_params = {
+        "alpha": 2,
+        "beta": 0.02,
+        "gamma": 0.0002,
+        "delta": 0.8,
+    }
+
     model = NeuroODE(
-        {
-            "alpha": 2,
-            "beta": 0.02,
-            "gamma": 0.0002,
-            "delta": 0.8,
-        },
+        init_params,
         ode_func,
     )
 
     trainer.train(model, y, t)
-    pass
+
+    assert model.get_params() != init_params

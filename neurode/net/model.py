@@ -60,7 +60,7 @@ class NeuroODE(nn.Module):
         steps = torch.diff(t)  # (sample_num-1, )
         t = t[:-1]  # (sample_num-1, )
 
-        y_arr = []
+        y_arr = [y0]
         yi = y0
         for no in range(t.shape[0]):
             yi = self.step_do(t[no], yi, steps[no])
