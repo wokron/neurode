@@ -20,7 +20,7 @@ class NeuroODE(nn.Module):
             weights.append(params[param_name])
 
         self.params_no = params_no
-        self.weights = nn.Parameter(torch.tensor(weights), requires_grad=True)
+        self.weights = nn.Parameter(torch.tensor(weights, dtype=float), requires_grad=True)
         self.ode_func = ode_func
 
     def get_params(self):
