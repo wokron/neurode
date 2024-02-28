@@ -19,8 +19,8 @@ class ODEDataset(Dataset):
         return len(self.y)
 
     def __getitem__(self, no):
-        t = torch.tensor(self.t[no])
-        y = torch.tensor(self.y[no])
-        steps = torch.tensor(self.steps[no])
-        y_next = torch.tensor(self.y_next[no])
+        t = torch.tensor(self.t[no], dtype=float)
+        y = torch.tensor(self.y[no], dtype=float)
+        steps = torch.tensor(self.steps[no], dtype=float)
+        y_next = torch.tensor(self.y_next[no], dtype=float)
         return t, y, steps, y_next

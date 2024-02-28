@@ -20,12 +20,12 @@ def test_forward():
         ode_func,
     )
 
-    # y_num = 2, batch_size = 1
+    # batch_size = 1, y_num = 2
     t = torch.tensor([0])
-    y = torch.tensor([[5000], [100]])
+    y = torch.tensor([[5000, 100]])
     steps = torch.tensor([1])
     result = model(t, y, steps)
-    assert result.shape == (2, 1)
+    assert result.shape == (1, 2)
 
 
 def test_backward():
@@ -44,11 +44,11 @@ def test_backward():
 
     # y_num = 2, batch_size = 1
     t = torch.tensor([0], dtype=float)
-    y = torch.tensor([[5000], [100]], dtype=float)
+    y = torch.tensor([[5000, 100]], dtype=float)
     steps = torch.tensor([1], dtype=float)
-    y_next = torch.tensor([[4800], [120]], dtype=float)
+    y_next = torch.tensor([[4800, 120]], dtype=float)
 
-    result = model.forward(t, y, steps)
+    result = model(t, y, steps)
     loss = loss_fn(result, y_next)
 
     assert loss.item() != 0
