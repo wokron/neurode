@@ -1,10 +1,7 @@
-import numpy as np
 from neurode.net.model import NeuroODE
 from neurode.net.trainer import ODETrainer
-import torch
-from scipy.integrate import odeint
-
 from neurode.tests.utils import generate_data
+import torch
 
 
 def ode_func(y0, t, params):

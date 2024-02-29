@@ -1,4 +1,4 @@
-from ..calc.calc_node import Placeholder
+from neurode.calc.calc_node import Placeholder
 import torch
 
 

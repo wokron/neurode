@@ -1,4 +1,4 @@
-from ..net.model import NeuroODE
+from neurode.net.model import NeuroODE
 import torch
 
 

@@ -1,4 +1,4 @@
-from ..net.data import ODEDataset
+from neurode.net.data import ODEDataset
 import numpy as np
 from torch import tensor
 from torch.utils.data import DataLoader
