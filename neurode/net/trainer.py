@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from tqdm import trange
 
 from neurode.net.model import NeuroODE
 
@@ -10,10 +11,12 @@ class ODETrainer:
         device: str,
         epoches: int,
         lr: float,
+        verbose: bool = False,
     ) -> None:
         self.device = torch.device(device)
         self.epoches = epoches
         self.lr = lr
+        self.verbose = verbose
 
     def train(self, model: NeuroODE, y: np.ndarray, t: np.ndarray):
         y = torch.tensor(y, dtype=float).to(self.device)
@@ -25,7 +28,8 @@ class ODETrainer:
 
         optim = torch.optim.Adam(model.parameters(), self.lr)
 
-        for _ in range(self.epoches):
+        range_epoches = trange(self.epoches, disable=(not self.verbose))
+        for _ in range_epoches:
             result = model(y[0], t)
 
             loss = loss_fn(result, y)
@@ -33,3 +37,5 @@ class ODETrainer:
             optim.zero_grad()
             loss.backward()
             optim.step()
+
+            range_epoches.set_postfix(loss=loss.item())
