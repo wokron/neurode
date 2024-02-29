@@ -19,9 +19,18 @@ class ODE:
             self.params[param.name] = 0
 
     def calc(self, y0, t):
-        return odeint(self.__calc_derivative, y0, t, args=(self.params,))
+        return odeint(self.equations.get_ode_fn(), y0, t, args=(self.params,))
 
-    def fit(self, y, t, device="cpu", epoches=100, lr=1e-4, max_step=0.2, verbose=False):
+    def fit(
+        self,
+        y,
+        t,
+        device="cpu",
+        epoches=100,
+        lr=1e-4,
+        max_step=0.2,
+        verbose=False,
+    ):
         trainer = ODETrainer(
             device=device,
             epoches=epoches,
@@ -31,14 +40,10 @@ class ODE:
 
         model = NeuroODE(
             self.params,
-            self.__calc_derivative,
+            self.equations.get_ode_fn(),
             max_step=max_step,
         )
 
         trainer.train(model, y, t)
 
         self.params.update(model.get_params())
-
-    def __calc_derivative(self, y, t, params: dict[str, Any]):
-        params.update({"t": t})
-        return self.equations.calc(y, params)

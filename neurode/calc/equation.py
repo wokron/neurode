@@ -43,3 +43,10 @@ class Equations:
             val.append(equation.expression(data))
 
         return val
+
+    def get_ode_fn(self):
+        def ode_fn(y, t, params: dict[str, Any]):
+            params.update({"t": t})
+            return self.calc(y, params)
+
+        return ode_fn
