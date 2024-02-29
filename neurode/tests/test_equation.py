@@ -1,5 +1,5 @@
-from neurode.calc.equations import Derivation as d, Equations
-from neurode.calc.calc_node import Placeholder as var
+from neurode.calc.equation import Derivation as d, Equations
+from neurode.calc.node import Placeholder as var
 import torch
 
 

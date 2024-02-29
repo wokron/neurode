@@ -1,7 +1,7 @@
 from neurode.tests.utils import generate_data
 from neurode.ode import ODE
-from neurode.calc.equations import Equations, Derivation as d
-from neurode.calc.calc_node import Placeholder
+from neurode.calc.equation import Equations, Derivation as d
+from neurode.calc.node import Placeholder
 import numpy as np
 
 
