@@ -4,6 +4,10 @@ from torch import nn
 import torch
 
 
+def odeint_euler(t, yi, step, calc_dy):
+    return yi + step * calc_dy(yi, t)
+
+
 class NeuroODE(nn.Module):
     def __init__(
         self,
@@ -11,6 +15,9 @@ class NeuroODE(nn.Module):
         # (y: list[float], t: float, params: dict[str, float])
         ode_func: Callable[[list[float], float, dict[str, float]], list[float]],
         max_step: float,
+        odeint_func: Callable[
+            [float, list[float], float, Callable[[list[float], float]]], list[float]
+        ] = odeint_euler,
         *args,
         **kwargs
     ) -> None:
@@ -27,6 +34,7 @@ class NeuroODE(nn.Module):
             torch.tensor(weights, dtype=float), requires_grad=True
         )
         self.ode_func = ode_func
+        self.odeint_func = odeint_func
         self.max_step = max_step
 
     def get_params(self):
@@ -47,12 +55,13 @@ class NeuroODE(nn.Module):
         y: (y_num, )
         steps: ()
         """
-        dy = self.ode_func(yi, t, self.get_params_weights())  # (y_num, batch_size)
-        dy = torch.stack(dy, dim=0)
 
-        y_next = yi + step * dy  # (y_num, )
+        def calc_dy(yi, t):
+            dy = self.ode_func(yi, t, self.get_params_weights())  # (y_num, batch_size)
+            dy = torch.stack(dy, dim=0)
+            return dy
 
-        return y_next
+        return self.odeint_func(t, yi, step, calc_dy)
 
     def step(self, t: torch.Tensor, yi: torch.Tensor, step: torch.Tensor):
         """
