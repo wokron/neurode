@@ -5,6 +5,7 @@ from scipy.integrate import odeint
 from neurode.net.model import NeuroODE
 from neurode.net.trainer import ODETrainer
 from neurode.calc import Equations
+from neurode.ode_next import ode_next_euler
 
 
 class ODE:
@@ -29,6 +30,7 @@ class ODE:
         epoches=100,
         lr=1e-4,
         max_step=0.2,
+        ode_next_fn=ode_next_euler,
         verbose=False,
     ):
         trainer = ODETrainer(
@@ -42,6 +44,7 @@ class ODE:
             self.params,
             self.equations.get_ode_fn(),
             max_step=max_step,
+            ode_next_fn=ode_next_fn,
         )
 
         trainer.train(model, y, t)
