@@ -33,6 +33,7 @@ def test_trainer():
     model = NeuroODE(
         init_params,
         ode_func,
+        max_step=0.01,
     )
 
     trainer.train(model, y, t)

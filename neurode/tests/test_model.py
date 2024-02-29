@@ -18,6 +18,7 @@ def test_forward():
             "delta": 0.8,
         },
         ode_func,
+        max_step=0.5,
     )
 
     # batch_size = 1, y_num = 2
@@ -36,6 +37,7 @@ def test_backward():
             "delta": 0.8,
         },
         ode_func,
+        max_step=0.5,
     )
 
     loss_fn = torch.nn.MSELoss()

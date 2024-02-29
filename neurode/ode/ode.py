@@ -17,7 +17,7 @@ class ODE:
     def calc(self, y0, t):
         return odeint(self.__calc_derivative, y0, t, args=(self.params,))
 
-    def fit(self, y, t, device="cpu", epoches=100, lr=1e-4):
+    def fit(self, y, t, device="cpu", epoches=100, lr=1e-4, max_step=0.2):
         trainer = ODETrainer(
             device=device,
             epoches=epoches,
@@ -27,6 +27,7 @@ class ODE:
         model = NeuroODE(
             self.params,
             self.__calc_derivative,
+            max_step=max_step,
         )
 
         trainer.train(model, y, t)

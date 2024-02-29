@@ -1,4 +1,6 @@
+import math
 from typing import Callable
+import numpy as np
 from torch import nn
 import torch
 
@@ -9,6 +11,7 @@ class NeuroODE(nn.Module):
         params: dict[str, float],
         # (y: list[float], t: float, params: dict[str, float])
         ode_func: Callable[[list[float], float, dict[str, float]], list[float]],
+        max_step: float,
         *args,
         **kwargs
     ) -> None:
@@ -25,6 +28,7 @@ class NeuroODE(nn.Module):
             torch.tensor(weights, dtype=float), requires_grad=True
         )
         self.ode_func = ode_func
+        self.max_step = max_step
 
     def get_params(self):
         return {
@@ -38,7 +42,7 @@ class NeuroODE(nn.Module):
             for param_name in self.params_no
         }
 
-    def step_do(self, t: torch.Tensor, yi: torch.Tensor, steps: torch.Tensor):
+    def next(self, t: torch.Tensor, yi: torch.Tensor, step: torch.Tensor):
         """
         t: ()
         y: (y_num, )
@@ -47,9 +51,24 @@ class NeuroODE(nn.Module):
         dy = self.ode_func(yi, t, self.get_params_weights())  # (y_num, batch_size)
         dy = torch.stack(dy, dim=0)
 
-        y_next = yi + steps * dy  # (y_num, )
+        y_next = yi + step * dy  # (y_num, )
 
         return y_next
+
+    def step(self, t: torch.Tensor, yi: torch.Tensor, step: torch.Tensor):
+        """
+        t: ()
+        y: (y_num, )
+        steps: ()
+        """
+        step_n = math.ceil(step.item() / self.max_step)
+        step = step / step_n
+
+        for _ in range(step_n):
+            yi = self.next(t, yi, step)
+            t = t + step
+
+        return yi
 
     def forward(self, y0: torch.Tensor, t: torch.Tensor):
         """
@@ -63,7 +82,7 @@ class NeuroODE(nn.Module):
         y_arr = [y0]
         yi = y0
         for no in range(t.shape[0]):
-            yi = self.step_do(t[no], yi, steps[no])
+            yi = self.step(t[no], yi, steps[no])
             y_arr.append(yi)
 
         return torch.stack(y_arr, dim=0)  # (sample_num, )
