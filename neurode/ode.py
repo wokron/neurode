@@ -8,7 +8,10 @@ from neurode.calc import Equations
 
 
 class ODE:
-    def __init__(self, equations: Equations) -> None:
+    def __init__(self, equations: Equations | list) -> None:
+        if type(equations) != Equations:
+            equations = Equations(equations)
+
         self.equations = equations
         self.params: dict[str, Any] = {}
 
@@ -18,11 +21,12 @@ class ODE:
     def calc(self, y0, t):
         return odeint(self.__calc_derivative, y0, t, args=(self.params,))
 
-    def fit(self, y, t, device="cpu", epoches=100, lr=1e-4, max_step=0.2):
+    def fit(self, y, t, device="cpu", epoches=100, lr=1e-4, max_step=0.2, verbose=False):
         trainer = ODETrainer(
             device=device,
             epoches=epoches,
             lr=lr,
+            verbose=verbose,
         )
 
         model = NeuroODE(
