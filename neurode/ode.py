@@ -19,13 +19,13 @@ class ODE:
         for param in self.equations.params:
             self.params[param.name] = 0
 
-    def calc(self, y0, t):
+    def calc(self, t, y0):
         return odeint(self.equations.get_ode_fn(), y0, t, args=(self.params,))
 
     def fit(
         self,
-        y,
         t,
+        y,
         device="cpu",
         epoches=100,
         lr=1e-4,
@@ -47,6 +47,6 @@ class ODE:
             ode_next_fn=ode_next_fn,
         )
 
-        trainer.train(model, y, t)
+        trainer.train(model, t, y)
 
         self.params.update(model.get_params())

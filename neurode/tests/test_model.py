@@ -24,7 +24,7 @@ def test_forward():
     # batch_size = 1, y_num = 2
     t = torch.tensor([0, 1, 2, 3, 4, 5])
     y0 = torch.tensor([5000, 100])
-    result = model(y0, t)
+    result = model(t, y0)
     assert result.shape == (6, 2)
 
 
@@ -47,7 +47,7 @@ def test_backward():
     y0 = torch.tensor([5000, 100], dtype=float)
     expect = torch.ones((6, 2), dtype=float)
 
-    result = model(y0, t)
+    result = model(t, y0)
     loss = loss_fn(result, expect)
 
     assert loss.item() != 0

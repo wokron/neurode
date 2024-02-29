@@ -18,9 +18,9 @@ class ODETrainer:
         self.lr = lr
         self.verbose = verbose
 
-    def train(self, model: NeuroODE, y: np.ndarray, t: np.ndarray):
-        y = torch.tensor(y, dtype=float).to(self.device)
+    def train(self, model: NeuroODE, t: np.ndarray, y: np.ndarray):
         t = torch.tensor(t, dtype=float).to(self.device)
+        y = torch.tensor(y, dtype=float).to(self.device)
 
         model = model.to(self.device)
 
@@ -32,7 +32,7 @@ class ODETrainer:
 
         try:
             for _ in range_epoches:
-                result = model(y[0], t)
+                result = model(t, y[0])
 
                 loss = loss_fn(result, y)
 

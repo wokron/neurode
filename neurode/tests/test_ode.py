@@ -27,7 +27,7 @@ def test_ode_calc():
     ode.params.update({"alpha": 2, "beta": 0.02, "gamma": 0.0002, "delta": 0.8})
 
     t = np.linspace(0, 10)
-    val = ode.calc([5000, 100], t)
+    val = ode.calc(t, [5000, 100])
 
     assert len(t) == len(val)
     assert (3000 <= val[:, 0]).all() and (val[:, 0] <= 5000).all()
@@ -57,6 +57,6 @@ def test_ode_fit():
 
     y, t = generate_data()
 
-    ode.fit(y, t, epoches=10)
+    ode.fit(t, y, epoches=10)
 
     assert ode.params != init_params

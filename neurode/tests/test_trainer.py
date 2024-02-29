@@ -33,6 +33,6 @@ def test_trainer():
         max_step=0.01,
     )
 
-    trainer.train(model, y, t)
+    trainer.train(model, t, y)
 
     assert model.get_params() != init_params

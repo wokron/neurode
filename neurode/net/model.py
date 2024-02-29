@@ -53,7 +53,7 @@ class NeuroODE(nn.Module):
         steps: ()
         """
 
-        def calc_dy(yi, t):
+        def calc_dy(t, yi):
             dy = self.ode_fn(yi, t, self.get_params_weights())  # (y_num, batch_size)
             dy = torch.stack(dy, dim=0)
             return dy
@@ -75,10 +75,10 @@ class NeuroODE(nn.Module):
 
         return yi
 
-    def forward(self, y0: torch.Tensor, t: torch.Tensor):
+    def forward(self, t: torch.Tensor, y0: torch.Tensor):
         """
-        y0: (y_num, )
         t: (sample_num, )
+        y0: (y_num, )
         """
 
         steps = torch.diff(t)  # (sample_num-1, )
