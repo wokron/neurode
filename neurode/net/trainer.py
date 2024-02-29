@@ -29,13 +29,17 @@ class ODETrainer:
         optim = torch.optim.Adam(model.parameters(), self.lr)
 
         range_epoches = trange(self.epoches, disable=(not self.verbose))
-        for _ in range_epoches:
-            result = model(y[0], t)
 
-            loss = loss_fn(result, y)
+        try:
+            for _ in range_epoches:
+                result = model(y[0], t)
 
-            optim.zero_grad()
-            loss.backward()
-            optim.step()
+                loss = loss_fn(result, y)
 
-            range_epoches.set_postfix(loss=loss.item())
+                optim.zero_grad()
+                loss.backward()
+                optim.step()
+
+                range_epoches.set_postfix(loss=loss.item())
+        except KeyboardInterrupt:
+            pass
