@@ -1,9 +1,10 @@
 from typing import Any
 
+from scipy.integrate import odeint
+
 from neurode.net.model import NeuroODE
 from neurode.net.trainer import ODETrainer
-from ..calc import Equations
-from scipy.integrate import odeint
+from neurode.calc import Equations
 
 
 class ODE:

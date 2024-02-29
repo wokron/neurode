@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+
 from neurode.net.model import NeuroODE
 
 

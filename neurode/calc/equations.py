@@ -1,5 +1,6 @@
 from typing import Any
-from .calc_node import Placeholder, CalcNode
+
+from neurode.calc.calc_node import Placeholder, CalcNode
 
 
 class Derivation:

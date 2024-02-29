@@ -1,5 +1,6 @@
 import math
 from typing import Callable
+
 from torch import nn
 import torch
 
@@ -15,9 +16,7 @@ class NeuroODE(nn.Module):
         # (y: list[float], t: float, params: dict[str, float])
         ode_func: Callable[[list[float], float, dict[str, float]], list[float]],
         max_step: float,
-        odeint_func: Callable[
-            [float, list[float], float, Callable[[list[float], float]]], list[float]
-        ] = odeint_euler,
+        odeint_func=odeint_euler,
         *args,
         **kwargs
     ) -> None:
