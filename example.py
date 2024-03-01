@@ -9,13 +9,13 @@ r1 = var("r1")
 r2 = var("r2")
 a1 = var("a1")
 a2 = var("a2")
-in1 = var("in1")
-in2 = var("in2")
+n1 = var("n1")
+n2 = var("n2")
 
 ode = ODE(
     [
-        d(x1) == r1 * x1 * (1 - x1 * in1) - a1 * x1 * x2,
-        d(x2) == r2 * x2 * (1 - x2 * in2) - a2 * x1 * x2,
+        d(x1) == r1 * x1 * (1 - x1 / n1) - a1 * x1 * x2,
+        d(x2) == r2 * x2 * (1 - x2 / n2) - a2 * x1 * x2,
     ]
 )
 
@@ -35,10 +35,10 @@ ode.params = {
     "r2": 0.1,
     "a1": 0.001,
     "a2": 0.001,
-    "in1": 0.001,
-    "in2": 0.001,
+    "n1": 1000,
+    "n2": 1000,
 }
-ode.fit(t, y, verbose=True, epoches=5000)
+ode.fit(t, y, verbose=True, epoches=5000, lr=1e-2)
 print(ode.params)
 
 t2 = np.linspace(0, 50)
