@@ -27,9 +27,13 @@ class NeuroODE(nn.Module):
             weights.append(params[param_name])
 
         self.params_no = params_no
+
         self.weights = nn.Parameter(
-            torch.tensor(weights, dtype=float), requires_grad=True
+            torch.nn.init.uniform_(torch.empty(len(weights)), a=0, b=1),
+            requires_grad=True,
         )
+        self.weights_ratios = weights
+
         self.ode_fn = ode_fn
         self.ode_next_fn = ode_next_fn
         self.max_step = max_step
@@ -37,12 +41,14 @@ class NeuroODE(nn.Module):
     def get_params(self):
         return {
             param_name: self.weights[self.params_no[param_name]].item()
+            * self.weights_ratios[self.params_no[param_name]]
             for param_name in self.params_no
         }
 
-    def get_params_weights(self):
+    def get_params_tensors(self):
         return {
             param_name: self.weights[self.params_no[param_name]]
+            * self.weights_ratios[self.params_no[param_name]]
             for param_name in self.params_no
         }
 
@@ -54,7 +60,7 @@ class NeuroODE(nn.Module):
         """
 
         def calc_dy(t, yi):
-            dy = self.ode_fn(yi, t, self.get_params_weights())  # (y_num, batch_size)
+            dy = self.ode_fn(yi, t, self.get_params_tensors())  # (y_num, batch_size)
             dy = torch.stack(dy, dim=0)
             return dy
 
