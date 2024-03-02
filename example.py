@@ -3,48 +3,52 @@ import numpy as np
 
 from neurode import ODE, derivate as d, var
 
-x1 = var("x1")
-x2 = var("x2")
-r1 = var("r1")
-r2 = var("r2")
-a1 = var("a1")
-a2 = var("a2")
-n1 = var("n1")
-n2 = var("n2")
+S, E, I, R, D = var("S"), var("E"), var("I"), var("R"), var("D")
+N = S + E + I + R + D
+beta = var("beta")
+sigma = var("sigma")
+gamma = var("gamma")
+alpha = var("alpha")
+omega = var("omega")
 
 ode = ODE(
     [
-        d(x1) == r1 * x1 * (1 - x1 / n1) - a1 * x1 * x2,
-        d(x2) == r2 * x2 * (1 - x2 / n2) - a2 * x1 * x2,
+        d(S) == omega * R - beta * I * S / N,
+        d(E) == beta * I * S / N - sigma * E,
+        d(I) == sigma * E - gamma * I - alpha * I,
+        d(R) == gamma * I - omega * R,
+        d(D) == alpha * I,
     ]
 )
 
-t = np.array([0, 10, 15, 30, 36, 40, 42])
-y = np.array([
-    [100, 150],
-    [165, 283],
-    [197, 290],
-    [280, 276],
-    [305, 269],
-    [318, 266],
-    [324, 264],
-])
+t = np.linspace(0, 250)
 
 ode.params = {
-    "r1": 0.1,
-    "r2": 0.1,
-    "a1": 0.001,
-    "a2": 0.001,
-    "n1": 1000,
-    "n2": 1000,
+    "beta": 1,
+    "sigma": 0.4,
+    "gamma": 0.4,
+    "alpha": 0.001,
+    "omega": 0.01,
 }
-ode.fit(t, y, verbose=True, epoches=5000, lr=1e-2)
+y = ode.calc(t, [100000, 10, 0, 0, 0])
+
+ode.params = {
+    "beta": 1,
+    "sigma": 0.1,
+    "gamma": 0.1,
+    "alpha": 0.004,
+    "omega": 0.04,
+}
+ode.fit(t, y, verbose=True, lr=4e-2, max_step=1, epoches=2000)
 print(ode.params)
 
-t2 = np.linspace(0, 50)
-y2 = ode.calc(t2, y[0])
+y2 = ode.calc(t, [100000, 10, 0, 0, 0])
 
-plt.scatter(t, y[:, 0])
-plt.scatter(t, y[:, 1])
-plt.plot(t2, y2)
+plt.plot(t, y2)
+plt.scatter(t, y[:, 0], label="S")
+plt.scatter(t, y[:, 1], label="E")
+plt.scatter(t, y[:, 2], label="I")
+plt.scatter(t, y[:, 3], label="R")
+plt.scatter(t, y[:, 4], label="D")
+plt.legend()
 plt.show()
