@@ -21,6 +21,18 @@ class CalcNode:
         other = self.__process_other(other)
         return Operator(self, other, lambda a, b: a / b)
 
+    def __floordiv__(self, other):
+        other = self.__process_other(other)
+        return Operator(self, other, lambda a, b: a // b)
+
+    def __mod__(self, other):
+        other = self.__process_other(other)
+        return Operator(self, other, lambda a, b: a % b)
+
+    def __pow__(self, other):
+        other = self.__process_other(other)
+        return Operator(self, other, lambda a, b: a**b)
+
     def __radd__(self, other):
         other = self.__process_other(other)
         return Operator(other, self, lambda a, b: a + b)
@@ -36,6 +48,18 @@ class CalcNode:
     def __rtruediv__(self, other):
         other = self.__process_other(other)
         return Operator(other, self, lambda a, b: a / b)
+
+    def __rfloordiv__(self, other):
+        other = self.__process_other(other)
+        return Operator(other, self, lambda a, b: a // b)
+
+    def __rmod__(self, other):
+        other = self.__process_other(other)
+        return Operator(other, self, lambda a, b: a % b)
+
+    def __rpow__(self, other):
+        other = self.__process_other(other)
+        return Operator(other, self, lambda a, b: a**b)
 
     @staticmethod
     def __process_other(other):
