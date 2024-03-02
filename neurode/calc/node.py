@@ -1,4 +1,5 @@
 from typing import Callable, Any
+from builtins import min as min_, max as max_
 
 
 class CalcNode:
@@ -6,68 +7,80 @@ class CalcNode:
         raise NotImplementedError
 
     def __add__(self, other):
-        other = self.__process_other(other)
+        other = self.process_other(other)
         return Operator(self, other, lambda a, b: a + b)
 
     def __sub__(self, other):
-        other = self.__process_other(other)
+        other = self.process_other(other)
         return Operator(self, other, lambda a, b: a - b)
 
     def __mul__(self, other):
-        other = self.__process_other(other)
+        other = self.process_other(other)
         return Operator(self, other, lambda a, b: a * b)
 
     def __truediv__(self, other):
-        other = self.__process_other(other)
+        other = self.process_other(other)
         return Operator(self, other, lambda a, b: a / b)
 
     def __floordiv__(self, other):
-        other = self.__process_other(other)
+        other = self.process_other(other)
         return Operator(self, other, lambda a, b: a // b)
 
     def __mod__(self, other):
-        other = self.__process_other(other)
+        other = self.process_other(other)
         return Operator(self, other, lambda a, b: a % b)
 
     def __pow__(self, other):
-        other = self.__process_other(other)
+        other = self.process_other(other)
         return Operator(self, other, lambda a, b: a**b)
 
     def __radd__(self, other):
-        other = self.__process_other(other)
+        other = self.process_other(other)
         return Operator(other, self, lambda a, b: a + b)
 
     def __rsub__(self, other):
-        other = self.__process_other(other)
+        other = self.process_other(other)
         return Operator(other, self, lambda a, b: a - b)
 
     def __rmul__(self, other):
-        other = self.__process_other(other)
+        other = self.process_other(other)
         return Operator(other, self, lambda a, b: a * b)
 
     def __rtruediv__(self, other):
-        other = self.__process_other(other)
+        other = self.process_other(other)
         return Operator(other, self, lambda a, b: a / b)
 
     def __rfloordiv__(self, other):
-        other = self.__process_other(other)
+        other = self.process_other(other)
         return Operator(other, self, lambda a, b: a // b)
 
     def __rmod__(self, other):
-        other = self.__process_other(other)
+        other = self.process_other(other)
         return Operator(other, self, lambda a, b: a % b)
 
     def __rpow__(self, other):
-        other = self.__process_other(other)
+        other = self.process_other(other)
         return Operator(other, self, lambda a, b: a**b)
 
     @staticmethod
-    def __process_other(other):
+    def process_other(other):
         return other if isinstance(other, CalcNode) else Value(other)
 
     @property
     def placeholders(self) -> list["Placeholder"]:
         raise NotImplementedError
+
+
+def min(a: CalcNode, b: CalcNode):
+    a = CalcNode.process_other(a)
+    b = CalcNode.process_other(b)
+    return Operator(a, b, lambda a, b: min_(a, b))
+
+
+def max(a: CalcNode, b: CalcNode):
+    a = CalcNode.process_other(a)
+    b = CalcNode.process_other(b)
+    return Operator(a, b, lambda a, b: max_(a, b))
 
 
 class Value(CalcNode):
