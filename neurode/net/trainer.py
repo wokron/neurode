@@ -23,23 +23,32 @@ class ODETrainer:
         y = torch.tensor(y, dtype=float).to(self.device)
 
         model = model.to(self.device)
-
         loss_fn = torch.nn.MSELoss().to(self.device)
-
         optim = torch.optim.Adam(model.parameters(), self.lr)
 
         range_epoches = trange(self.epoches, disable=(not self.verbose))
+        loss_record: list[float] = []
+        last_epoch = 0
 
         try:
-            for _ in range_epoches:
+            for epoch in range_epoches:
                 result = model(t, y[0])
-
                 loss = loss_fn(result, y)
 
                 optim.zero_grad()
                 loss.backward()
                 optim.step()
 
-                range_epoches.set_postfix(loss=loss.item())
+                loss_value = loss.item()
+                range_epoches.set_postfix(loss_value)
+                loss_record.append(loss_value)
+                last_epoch = epoch
+
         except KeyboardInterrupt:
             pass
+
+        return {
+            "loss_record": loss_record,
+            "last_epoch": last_epoch,
+            "params": model.get_params(),
+        }

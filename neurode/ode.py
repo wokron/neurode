@@ -33,13 +33,6 @@ class ODE:
         ode_next_fn=ode_next_euler,
         verbose=False,
     ):
-        trainer = ODETrainer(
-            device=device,
-            epoches=epoches,
-            lr=lr,
-            verbose=verbose,
-        )
-
         model = NeuroODE(
             self.params,
             self.equations.get_ode_fn(),
@@ -47,6 +40,15 @@ class ODE:
             ode_next_fn=ode_next_fn,
         )
 
-        trainer.train(model, t, y)
+        trainer = ODETrainer(
+            device=device,
+            epoches=epoches,
+            lr=lr,
+            verbose=verbose,
+        )
 
-        self.params.update(model.get_params())
+        result = trainer.train(model, t, y)
+
+        self.params.update(result["params"])
+
+        return result
