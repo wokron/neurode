@@ -3,8 +3,31 @@ from typing import Callable
 
 from torch import nn
 import torch
+from scipy.stats import rv_continuous
 
 from neurode.ode_next import ode_next_euler
+
+
+class WeightsDistribution(rv_continuous):
+    def __init__(
+        self,
+        momtype=1,
+        a=None,
+        b=None,
+        xtol=1e-14,
+        badvalue=None,
+        name=None,
+        longname=None,
+        shapes=None,
+        seed=None,
+    ):
+        super().__init__(momtype, a, b, xtol, badvalue, name, longname, shapes, seed)
+
+    def _pdf(self, x):
+        if x < 1:
+            return 50 / 81 - 1 / (162 * x * x)
+        else:
+            return 50 / (81 * x * x) - 1 / 162
 
 
 class NeuroODE(nn.Module):
@@ -29,7 +52,7 @@ class NeuroODE(nn.Module):
         self.params_no = params_no
 
         self.weights = nn.Parameter(
-            torch.nn.init.uniform_(torch.empty(len(weights)), a=0, b=1),
+            torch.tensor(WeightsDistribution(a=1 / 10, b=10).rvs(size=len(weights))),
             requires_grad=True,
         )
         self.weights_ratios = weights
