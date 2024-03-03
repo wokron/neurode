@@ -9,18 +9,24 @@ from neurode.ode_next import ode_next_euler
 
 
 class ODE:
-    def __init__(self, equations: Equations | list) -> None:
-        if type(equations) != Equations:
-            equations = Equations(equations)
-
-        self.equations = equations
+    def __init__(self, equations: Equations | list = None, ode_fn=None) -> None:
         self.params: dict[str, Any] = {}
 
-        for param in self.equations.params:
-            self.params[param.name] = 0
+        if equations != None:
+            if type(equations) != Equations:
+                equations = Equations(equations)
+
+            self.ode_fn = equations.get_ode_fn()
+
+            for param in self.equations.params:
+                self.params[param.name] = 0
+        elif ode_fn != None:
+            self.ode_fn = ode_fn
+        else:
+            raise ValueError
 
     def int(self, t, y0):
-        return odeint(self.equations.get_ode_fn(), y0, t, args=(self.params,))
+        return odeint(self.ode_fn, y0, t, args=(self.params,))
 
     def fit(
         self,
@@ -35,7 +41,7 @@ class ODE:
     ):
         model = NeuroODE(
             self.params,
-            self.equations.get_ode_fn(),
+            self.ode_fn,
             max_step=max_step,
             ode_next_fn=ode_next_fn,
         )
