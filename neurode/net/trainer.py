@@ -40,7 +40,7 @@ class ODETrainer:
                 optim.step()
 
                 loss_value = loss.item()
-                range_epoches.set_postfix(loss_value)
+                range_epoches.set_postfix(loss=loss_value)
                 loss_record.append(loss_value)
                 last_epoch = epoch
 
