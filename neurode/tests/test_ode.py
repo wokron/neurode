@@ -5,7 +5,7 @@ from neurode.calc.node import Placeholder
 import numpy as np
 
 
-def test_ode_calc():
+def test_ode_int():
     x = Placeholder("x")
     y = Placeholder("y")
     alpha = Placeholder("alpha")
@@ -27,7 +27,7 @@ def test_ode_calc():
     ode.params.update({"alpha": 2, "beta": 0.02, "gamma": 0.0002, "delta": 0.8})
 
     t = np.linspace(0, 10)
-    val = ode.calc(t, [5000, 100])
+    val = ode.int(t, [5000, 100])
 
     assert len(t) == len(val)
     assert (3000 <= val[:, 0]).all() and (val[:, 0] <= 5000).all()

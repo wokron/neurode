@@ -30,7 +30,7 @@ ode.params = {
     "alpha": 0.001,
     "omega": 0.01,
 }
-y = ode.calc(t, [100000, 10, 0, 0, 0])
+y = ode.int(t, [100000, 10, 0, 0, 0])
 
 ode.params = {
     "beta": 1,
@@ -42,7 +42,7 @@ ode.params = {
 ode.fit(t, y, verbose=True, lr=4e-2, max_step=1, epoches=2000)
 print(ode.params)
 
-y2 = ode.calc(t, [100000, 10, 0, 0, 0])
+y2 = ode.int(t, [100000, 10, 0, 0, 0])
 
 plt.plot(t, y2)
 plt.scatter(t, y[:, 0], label="S")

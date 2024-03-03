@@ -19,7 +19,7 @@ class ODE:
         for param in self.equations.params:
             self.params[param.name] = 0
 
-    def calc(self, t, y0):
+    def int(self, t, y0):
         return odeint(self.equations.get_ode_fn(), y0, t, args=(self.params,))
 
     def fit(
