@@ -85,6 +85,7 @@ class NeuroODE(nn.Module):
         def calc_dy(t, yi):
             dy = self.ode_fn(yi, t, self.get_params_tensors())  # (y_num, batch_size)
             dy = torch.stack(dy, dim=0)
+            dy = torch.clamp(dy, -1e5, 1e5)
             return dy
 
         return self.ode_next_fn(t, yi, step, calc_dy)
