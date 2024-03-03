@@ -23,7 +23,7 @@ class ODE:
         elif ode_fn != None:
             self.ode_fn = ode_fn
         else:
-            raise ValueError
+            raise ValueError("either equations or ode_fn must be provided")
 
     def int(self, t, y0):
         return odeint(self.ode_fn, y0, t, args=(self.params,))

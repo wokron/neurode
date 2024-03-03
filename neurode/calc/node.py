@@ -4,7 +4,7 @@ from builtins import min as min_, max as max_
 
 class CalcNode:
     def __call__(self, data: dict[str, Any]):
-        raise NotImplementedError
+        raise NotImplementedError("this method must be implemented in subclasses")
 
     def __add__(self, other):
         other = self.process_other(other)
@@ -68,7 +68,7 @@ class CalcNode:
 
     @property
     def placeholders(self) -> list["Placeholder"]:
-        raise NotImplementedError
+        raise NotImplementedError("this method must be implemented in subclasses")
 
 
 def min(a: CalcNode, b: CalcNode):
