@@ -18,7 +18,7 @@ class ODE:
 
             self.ode_fn = equations.get_ode_fn()
 
-            for param in self.equations.params:
+            for param in equations.params:
                 self.params[param.name] = 0
         elif ode_fn != None:
             self.ode_fn = ode_fn
